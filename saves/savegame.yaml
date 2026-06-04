@@ -1,0 +1,25 @@
+--- !ruby/object:Game
+secret_word:
+- R
+- E
+- B
+- A
+- T
+- E
+display_word:
+- _
+- E
+- B
+- A
+- T
+- E
+remaining_lives: 3
+incorrect_guesses:
+- G
+- L
+- C
+correct_guesses:
+- A
+- B
+- T
+- E

@@ -1,3 +1,5 @@
+require 'yaml'
+
 class Game
   MAX_LIVES = 6
 
@@ -10,7 +12,7 @@ class Game
   end
 
   def play
-    puts 'Guess the secret word!\n'
+    puts 'Guess the secret word!'
 
     until game_over?
       puts "Word: #{@display_word.join(' ')}"
@@ -40,6 +42,14 @@ class Game
 
   private
 
+  def save_game
+    Dir.mkdir('saves') unless Dir.exist?('saves')
+
+    File.open('saves/savegame.yaml', 'w') do |file|
+      file.write(YAML.dump(self))
+    end
+  end
+
   def prompt_and_evaluate_guess
     guess = prompt_guess
     evaluate_guess(guess)
@@ -48,9 +58,11 @@ class Game
   def evaluate_guess(letter)
     if @secret_word.include?(letter)
       @correct_guesses.push(letter)
+
       @secret_word.each_with_index do |secret_char, i|
         @display_word[i] = secret_char if secret_char == letter
       end
+
       puts 'Hit!'
     else
       @incorrect_guesses.push(letter)
@@ -60,8 +72,15 @@ class Game
   end
 
   def prompt_guess
-    print 'Input a letter: '
+    print 'Input a letter (type \'exit\' to save the game and exit): '
     guess = gets.chomp.upcase
+
+    if guess == 'EXIT'
+      save_game
+      puts 'Game successfully saved! Exiting...'
+      exit
+    end
+
     until guess.length == 1 && guess.match?(/[A-Z]/) && !already_guessed?(guess)
       if already_guessed?(guess)
         print 'Letter has already been used. Try again: '
@@ -70,6 +89,7 @@ class Game
       end
       guess = gets.chomp.upcase
     end
+
     guess
   end
 
